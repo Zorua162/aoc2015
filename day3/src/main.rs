@@ -74,23 +74,32 @@ fn part2(contents: &String) -> Option<Answer> {
 
     let mut houses: HashMap<Location, i32> = HashMap::new();
 
-    let mut current_location = Location{ x: 0, y: 0 };
+    let mut santa_location = Location{ x: 0, y: 0 };
+    let mut robo_santa_location = Location{ x: 0, y: 0 };
 
-    houses.insert(current_location.clone(), 1);
+    houses.insert(santa_location.clone(), 1);
 
 
-    for n in contents.chars() {
-        current_location.move_location(&n);
+    for (i, n) in contents.chars().enumerate() {
+        if i % 2 == 0 {
+            santa_location.move_location(&n);
+            houses.entry(santa_location.clone()).and_modify(|counter| *counter += 1).or_insert(1);
+        } else {
+            robo_santa_location.move_location(&n);
+            houses.entry(robo_santa_location.clone()).and_modify(|counter| *counter += 1).or_insert(1);
 
-        houses.entry(current_location.clone()).and_modify(|counter| *counter += 1).or_insert(1);
+        }
 
     }
 
-    println!("All houses are {houses:?}");
+    // println!("All houses are {houses:?}");
     let num_houses = houses.len();
 
     return Some(Answer{ answer: num_houses } )
 }
+
+// Attempted answers
+// 1150 too low
 
 fn main() {
     // Planning
@@ -109,13 +118,9 @@ fn main() {
     // Plan was wrong, instead there are two sleighs for some reason?!?!
 
     let result2 = part2(&contents);
-    println!("Negative floor is {result2:?}");
+    println!("Part2 result {result2:?}");
 
 }
-
-
-// Attempted answers
-
 
 
 // Tests
@@ -132,7 +137,10 @@ mod tests {
     }
 
     #[test]
-    fn another() {
-        panic!("Make this test fail");
+    fn test_part2() {
+    let contents = fs::read_to_string("input.txt")
+    .expect("Input file is expected");
+        let result = part2(&contents);
+        assert_eq!(result, Some(Answer { answer: 2341}));
     }
 }
