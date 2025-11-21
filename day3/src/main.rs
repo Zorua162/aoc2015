@@ -7,6 +7,22 @@ struct Answer {
     answer: usize
 }
 
+trait InputGetter {
+    fn get_input(&self) -> String;
+    
+}
+
+struct LocalFileInputGetter {
+    path: &'static str,
+}
+
+impl InputGetter for LocalFileInputGetter {
+    fn get_input(&self) -> String {
+        return fs::read_to_string(self.path).expect("Input file is expected");
+    }
+}
+
+
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
 struct Location {
     x: i32,
@@ -109,9 +125,7 @@ fn main() {
 
     // Part 2 is probably going to involve house most visited
     // Extend list to map, if it exists then add one
-    let contents = fs::read_to_string("input.txt")
-    .expect("Input file is expected");
-
+    let contents = LocalFileInputGetter{ path: "input.txt"}.get_input();
     let result1 = part1(&contents);
     println!("Part1 result {result1:?}");
 
@@ -130,16 +144,14 @@ mod tests {
 
     #[test]
     fn test_part1() {
-    let contents = fs::read_to_string("input.txt")
-    .expect("Input file is expected");
+    let contents = LocalFileInputGetter{ path: "input.txt"}.get_input();
         let result = part1(&contents);
         assert_eq!(result, Some(Answer { answer: 2081}));
     }
 
     #[test]
     fn test_part2() {
-    let contents = fs::read_to_string("input.txt")
-    .expect("Input file is expected");
+    let contents = LocalFileInputGetter{ path: "input.txt"}.get_input();
         let result = part2(&contents);
         assert_eq!(result, Some(Answer { answer: 2341}));
     }
