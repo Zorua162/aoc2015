@@ -38,7 +38,7 @@ fn find_hash_with_starting(contents: &String, starting: &str, start_search: u32,
 
         let result = hash_value(value);
 
-        let initial_five = &result[..5];
+        let initial_five = &result[..starting.len()];
 
         // println!("initial five are {initial_five}");
 
@@ -65,7 +65,7 @@ fn part1(contents: &String) -> Option<Answer> {
 
 
 fn part2(contents: &String) -> Option<Answer> {
-    return find_hash_with_starting(contents, "000000", 735000000, 1000000000);
+    return find_hash_with_starting(contents, "000000", 0, 1000000000);
 }
 
 fn main() {
@@ -73,8 +73,8 @@ fn main() {
     let contents = LocalFileInputGetter{ path: "input.txt"}.get_input();
 
     // Part one is brute force the md5 by going up one number at a time
-    // let result1 = part1(&contents);
-    // println!("Part1 result {result1:?}");
+    let result1 = part1(&contents);
+    println!("Part1 result {result1:?}");
 
     // Part two seems to be brute force, but with even more pizzaz
     let result2 = part2(&contents);
@@ -99,6 +99,6 @@ mod tests {
     fn test_part2() {
     let contents = LocalFileInputGetter{ path: "input.txt"}.get_input();
         let result = part2(&contents);
-        assert_eq!(result, Some(Answer { answer: 2341}));
+        assert_eq!(result, Some(Answer { answer: 3938038 }));
     }
 }
