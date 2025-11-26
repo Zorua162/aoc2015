@@ -1,4 +1,5 @@
 use std::fs;
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 struct Answer {
@@ -32,6 +33,14 @@ impl InputGetter for LocalFileInputGetter {
 //     }
 // }
 
+fn create_vowel_count() -> HashMap<char, u32> {
+    let mut vowel_count: HashMap<char, u32> = HashMap::new();
+    for char in VOWELS.chars() {
+        vowel_count.insert(char, 0);
+    }
+    return vowel_count
+}
+
 #[derive(Debug, PartialEq)]
 enum Rule {
     ThreeVowels {},
@@ -39,7 +48,24 @@ enum Rule {
     DisallowedStrings {},
 }
 
+static VOWELS: &str = "aeiou";
+
 impl Rule {
+    pub fn do_rule(&self, line: String) -> bool {
+        match self {
+            Rule::ThreeVowels { } => {
+                let mut vowel_count: HashMap<char, u32> = HashMap::new();
+                for n in line.chars() {
+                    if VOWELS.contains(n) {
+                        vowel_count.entry(n).and_modify(|counter| *counter += 1).or_insert(1);
+                    }
+                }
+                return vowel_count.values().sum::<u32>() >= 3
+            },
+            Rule::DoubleLetter { } => false,
+            Rule::DisallowedStrings { } => false,
+        }
+    }
 
 }
 
@@ -48,8 +74,8 @@ struct RuleManager {
 }
 
 fn part1(contents: &String) -> Option<Answer> {
-    let rules = vec![]
-    let ruleManager = RuleManager{rules: rules},
+    let rules = vec![Rule::ThreeVowels {}];
+    let ruleManager = RuleManager{rules: rules};
     None
 }
 
@@ -74,6 +100,13 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_three_vowels_rule_true() {
+        let input = "one";
+        let rule = Rule::ThreeVowels {  };
+        assert!(rule.do_rule(input.to_string()));
+    }
 
     #[test]
     fn test_part1() {
