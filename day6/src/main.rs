@@ -22,7 +22,6 @@ impl InputGetter for LocalFileInputGetter {
     }
 }
 
-
 fn part1(contents: &String) -> Option<Answer> {
     None
 
