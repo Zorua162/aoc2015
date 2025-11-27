@@ -104,8 +104,18 @@ impl Rule {
                 // Remove one from triple characters
                 for ((char1, char2), char3) in line.chars().zip(line.chars().skip(1)).zip(line.chars().skip(2)) {
                     if char1 == char2 && char2 == char3 {
+                        println!("triple is {char1} {char2} {char3}");
                         let pair = format!("{}{}", char1, char2);
                         pair_count.entry(pair).and_modify(|counter| *counter -= 1).or_insert(1);
+                    }
+                }
+
+                // Add one back to quadruple characters to negate the double triple
+                for (((char1, char2), char3), char4) in line.chars().zip(line.chars().skip(1)).zip(line.chars().skip(2)).zip(line.chars().skip(3)) {
+                    if char1 == char2 && char2 == char3 && char3 == char4 {
+                        println!("triple is {char1} {char2} {char3}");
+                        let pair = format!("{}{}", char1, char2);
+                        pair_count.entry(pair).and_modify(|counter| *counter += 1).or_insert(1);
                     }
                 }
 
@@ -138,6 +148,8 @@ impl RuleManager {
     pub fn check_rules(&self, line: &str) -> bool {
         for rule in self.rules.iter() {
             if !(rule.do_rule(line.to_string())) {
+                // Assuming that too many are false currently
+                println!("line {line} is naughty due to {rule:?}");
                 return false
             }
         }
@@ -173,6 +185,7 @@ fn part2(contents: &String) -> Option<Answer> {
             remaining.push(line);
         }
     }
+    println!("Nice lines are {remaining:?}");
     Some(Answer{answer: remaining.len()})
 }
 
@@ -363,7 +376,16 @@ mod tests {
         let input = "tsatsbts";
         let rule = Rule::PairAnyTwo {  };
         let out = rule.do_rule(input.to_string());
-        assert_eq!(out, false);
+        assert_eq!(out, true);
+    }
+
+    #[test]
+    fn test_part2_nice_pair_any_two_self_created_2() {
+        // Should be a "nice" string (included)
+        let input = "xilodxfuxphuiiii";
+        let rule = Rule::PairAnyTwo {  };
+        let out = rule.do_rule(input.to_string());
+        assert_eq!(out, true);
     }
 
     #[test]
@@ -428,6 +450,16 @@ mod tests {
     fn test_part2_end_to_end_nice_self_1() {
         // Should be a "nice" string (included)
         let input = "tstwsswswrxlzrqs";
+        let rules = vec![Rule::SkipDouble {  }, Rule::PairAnyTwo {  }];
+        let rule_manager = RuleManager{rules: rules};
+        let result = rule_manager.check_rules(input);
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn test_part2_end_to_end_nice_self_quintuple_bonus() {
+        // Should be a "nice" string (included)
+        let input = "aaaaa";
         let rules = vec![Rule::SkipDouble {  }, Rule::PairAnyTwo {  }];
         let rule_manager = RuleManager{rules: rules};
         let result = rule_manager.check_rules(input);
