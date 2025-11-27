@@ -22,24 +22,7 @@ impl InputGetter for LocalFileInputGetter {
     }
 }
 
-struct HouseLights {
-    // lights: Vec<Vec<bool>>,
-    lights: [[bool; 1000]; 1000],
-}
-
-struct Instruction {
-    
-}
-
-
 fn part1(contents: &String) -> Option<Answer> {
-    // Create a 2d array that will store our light positions
-    let house_lights = HouseLights {lights: [[true; 1000]; 1000]};
-
-    // Loop through each instruction and set them in house_lights
-
-    // loop through all of house_lights and count how many are true
-
     None
 
 }
